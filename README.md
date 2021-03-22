@@ -391,7 +391,70 @@ int main() {
 ```
 
 ### Сортування «тернарним деревом»
-???
+```
+#include <iostream>
+
+#include <vector>
+
+using namespace std;
+
+struct Tree {                  // Структура бинарного дерева
+        int data;
+    Tree* left;
+    Tree* middle;
+    Tree* right;
+};
+
+Tree* addTree(Tree* tree, const float& d) {    // Добавление элемента в дерево
+    if (tree == nullptr) {
+        tree = new Tree;
+        tree->data = d;
+        tree->left = tree->middle = tree->right = nullptr;
+    }
+    else if (d < tree->data) { tree->left = addTree(tree->left, d); }
+    else if (d == tree->data) { tree->middle = addTree(tree->middle, d); }
+    else tree->right = addTree(tree->right, d);
+    return tree;
+}
+
+void deleteTree(Tree* tree) {          // Удаление дерева
+    if (tree != nullptr) {
+        deleteTree(tree->left);
+        deleteTree(tree->middle);
+        deleteTree(tree->right);
+        delete tree;
+    }
+}
+
+vector<int> sortTree(Tree* tree, vector<int> sorted_tree){    // Сортировка бинарным деревом
+    if (tree != nullptr) {
+        sorted_tree = sortTree(tree->left, sorted_tree);
+        sorted_tree.push_back(tree->data);
+        sorted_tree = sortTree(tree->middle, sorted_tree);
+        sorted_tree.push_back(tree->data);  // Внесение элементов в результирующий массив
+        sorted_tree = sortTree(tree->right, sorted_tree);
+    }
+    return sorted_tree;
+}
+
+int main() {
+    int arr[] = { 6, 5, 3, 7, 8, 1, 9 };  // test_1 {6, 5, 3, 7, 8, 1, 9}        => {1, 3, 5, 6, 7, 8, 9}
+//                                        // test_2 {4, 7, 1, 12, 89, 4, 6, 11, 44, 9 } => {1, 4, 4, 6, 7, 9, 11, 12, 44, 89}
+    Tree* tree = nullptr;
+    vector<int> sv;
+
+    for (int i = 0; i < size(arr); ++i) {
+        tree = addTree(tree, arr[i]);
+    }
+    sv = sortTree(tree, sv);
+
+    for (const int& i : sv) {
+        cout << i << " ";
+    }
+    deleteTree(tree);
+    return 0;
+}
+```
 
 ### Наступний метод: спочатку послідовність складається з одного елемента. В послідовність здійснюємо додавання, використовуючи «двійковий пошук» місця. Запропонувати відповідну структуру для швидкого бінарного пошуку та вставки. Бажана часова складність O(log n)
 ???

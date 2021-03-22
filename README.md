@@ -1,7 +1,59 @@
 # Грибной модуль
 
 ###  Метод «квадратичної вибірки»
-???
+```
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int> tetragonSort(vector<int> arr) {
+    int min = 0, i = 0;
+    int nGroups = static_cast<int>(sqrt(arr.size()));             // Размерность одного подмассива
+    vector<int> bufferList, resultList;
+    if (nGroups * nGroups < arr.size()) { nGroups++; }
+
+    bufferList.assign(nGroups, INT_MAX);                          // Заполняем буферный массив максимальными значениями
+    for (int i = nGroups * min; i < arr.size(); i += nGroups) {    // Цикл заполнения подмассивов буферного массива
+        min = i;                                                  // Индекс минимального элемента
+        for (int j = i + 1; j < i + nGroups && j < arr.size(); j++) {
+            if (arr[j] < arr[min])
+                min = j;                                          // Запоминаем индекс минимального элемента
+        }
+
+        bufferList[i / nGroups] = arr[min];                       // Добавление элемента в подсписок буферного списка
+        arr[min] = INT_MAX;                                       // Выделение ячейки в основном массиве
+    }
+
+    while (true) {                                        // Цикл формирования ответа
+        min = 0;                                          
+        for (int k = 1; k < bufferList.size(); k++) {     
+            if (bufferList[k] < bufferList[min]) { min = k; }
+        }
+        resultList.push_back(bufferList[min]);            // Заполнение результирующего массива
+        if (resultList.size() == arr.size()) { break; }   // break-point - массив отсортирован
+
+        i = nGroups * min;                                // Точка начального просмотра
+        min = i;
+        for (int j = i + 1; j < i + nGroups && j < arr.size(); j++) {
+            if (arr[j] < arr[min]) { min = j; }
+        }
+
+        bufferList[i / nGroups] = arr[min];               // Добавление элемента в подсписок буферного списка
+        arr[min] = INT_MAX;                               // Выделение ячейки в основном массиве
+    }
+    return resultList;
+}
+
+int main() {
+        vector<int> varr = { 6, 5, 3, 7, 8, 1, 9 };  // test_1 {6, 5, 3, 7, 8, 1, 9}			   => {1, 3, 5, 6, 7, 8, 9}
+                                                     // test_2 {4, 7, 1, 12, 89, 4, 6, 11, 44, 9 } => {1, 4, 4, 6, 7, 9, 11, 12, 44, 89}
+        varr = tetragonSort(varr);
+        for (const auto& i : varr) { cout << i << " "; } 
+        cout << endl;
+    return 0;
+}
+```
 
 ### Сортування «злиттям» не рекурсивним алгоритмом
 
@@ -111,13 +163,110 @@ int main()
 ```
 
 ### «Бітове» сортування
-???
+```
+#include <iostream>
+using namespace std;
+
+void bitsort(int theArray[],int s) {
+
+int* bucket[2];
+
+int bSize[2];
+
+bucket[0] = new int[s];
+bucket[1] = new int[s];
+
+int divisor = 1;
+
+for (int i=1; i<32; i++) {
+
+    bSize[0] = 0;
+    bSize[1] = 0;
+
+    for (int j = 0; j < s; j++) {
+
+        int t = theArray[j] / divisor % 2;
+        bucket[t][bSize[t]] = theArray[j];
+        bSize[t]++;
+
+    }
+
+    int c = 0;
+
+    for (int k = 0; k < bSize[0]; k++) theArray[c++] = bucket[0][k];
+    for (int k = 0; k < bSize[1]; k++) theArray[c++] = bucket[1][k];
+
+    divisor *= 2;
+}
+
+delete[] bucket[0];
+delete[] bucket[1];
+
+}
+
+int main() {
+
+    int array[] = {348756, 223756, 291834, 2389, 346, 8674, 373456, 42356, 23, 48635 };
+    cout<<"List before bitsort: "<<endl;
+    for (int i=0; i<10; i++) cout<<array[i]<<' ';
+    cout<<endl;
+    bitsort(array,10);
+    cout<<"List after bitsort: "<<endl;
+    for (int i=0; i<10; i++) cout<<array[i]<<' ';
+    cout<<endl;
+    return 0;
+}
+```
 
 ### «Лексикографічне» сортування к-кортежів
 ???
 
 ### «Лексикографічне» сортування ланцюжків різної довжини
-???
+```
+#include <iostream>
+using namespace std;
+
+void LexicSort (string *str, int n) {
+    string temp;
+    for(int i = 0; i < n-1; ++i)
+        for( int j = i+1; j < n; ++j)
+        {
+            if(str[i] > str[j])
+            {
+                temp = str[i];
+                str[i] = str[j];
+                str[j] = temp;
+            }
+        }
+}
+
+int main()
+{
+    int n;
+    cout<<"How many Strings u want to Sort:  ";
+    cin>>n;
+    string str[n], temp;
+
+    cout << "\nEnter [ "<<n<<" ] Strings Below: " << endl;
+
+    for(int i = 0; i < n; i++)
+    {
+        cout<<"\nEnter [ "<<i+1<<" ] String: ";
+        cin>>str[i];
+    }
+
+    LexicSort(str,n);
+
+    cout << "\nAfter Sorting [ "<<n<<" ] Strings in lexicographical order: \n" << endl;
+
+    for(int i = 0; i < n; ++i)
+    {
+        cout << str[i] << endl;
+    }
+
+    return 0;
+}
+```
 
 ### «Швидке» сортування не рекурсивним алгоритмом
 ```
